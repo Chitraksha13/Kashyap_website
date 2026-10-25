@@ -1,12 +1,11 @@
+/* A walk through a gallery: plaster walls, picture lights, wall labels, a floor plan. */
 :root {
-  --paper: #f8f1e3;
-  --ink: #2b2118;
-  --muted: #6b5a47;
-  --accent: #c2543b;
-  --sage: #6e8f5a;
+  --ink: #1d1c1a;
+  --muted: #6c675e;
+  --accent: #a8472a;
   --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
   --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --hand: 'Caveat', 'Snell Roundhand', cursive;
+  --track: 9vh; /* the ceiling rail the lamps hang from */
 }
 
 *,
@@ -16,13 +15,15 @@
 }
 
 html {
-  background: #e4d0ae;
+  background: #272522;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   font-family: var(--sans);
   color: var(--ink);
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -32,53 +33,588 @@ button {
   cursor: pointer;
 }
 
-/* The scene */
-.world {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
 }
 
-.clickable {
+.eyebrow {
+  margin: 0 0 1.6vh;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Stage: pinned while the wall slides past */
+.gallery {
+  position: relative;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+  background: radial-gradient(ellipse 120% 100% at 50% 45%, transparent 55%, rgba(14, 9, 4, 0.34) 100%);
+}
+
+.wall {
+  display: flex;
+  height: 100%;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Rooms */
+.room {
+  --tone: #e8e3d9;
+  --fg: #1d1c1a;
+  --fg-muted: #6c675e;
+  --floor-a: #bcae98;
+  --floor-b: #9a8b74;
+  --skirt: #dad4c8;
+  position: relative;
+  flex: none;
+  height: 100%;
+  background: var(--tone);
+  color: var(--fg);
+}
+
+.room-experience {
+  --tone: #dfe2d8;
+}
+
+.room-projects {
+  --tone: #e7dfd0;
+}
+
+.room.dark {
+  --tone: #2a2724;
+  --fg: #efeae0;
+  --fg-muted: #a8a195;
+  --floor-a: #3b352e;
+  --floor-b: #29241f;
+  --skirt: #35312c;
+}
+
+/* plaster grain, and the shadow where one room turns into the next */
+.room::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.room + .room {
+  box-shadow: inset 4vh 0 4vh -3vh rgba(0, 0, 0, 0.22);
+}
+
+.room::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 14vh;
+  pointer-events: none;
+  background: linear-gradient(rgba(0, 0, 0, 0.2), transparent);
+}
+
+.track {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: var(--track);
+  height: 0.7vh;
+  background: #2a2724;
+  box-shadow: 0 0.6vh 1.2vh rgba(0, 0, 0, 0.35);
+}
+
+.floor {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14vh;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.32), transparent 30%),
+    linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.07) 50%, transparent 60%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.06) 0 1px, transparent 1px 15vh),
+    linear-gradient(var(--floor-a), var(--floor-b));
+}
+
+.floor::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -2.4vh;
+  height: 2.4vh;
+  background: var(--skirt);
+  box-shadow: inset 0 -0.3vh 0 rgba(0, 0, 0, 0.18), 0 -1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.room-in {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 9vh;
+  height: 100%;
+  padding: 11vh 11vh 15vh;
+}
+
+/* Vinyl lettering that opens each room */
+.room-title {
+  flex: none;
+  width: 34vh;
+  color: var(--fg);
+}
+
+.room-title .rn {
+  display: block;
+  margin-bottom: 2vh;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.room-title h2 {
+  font-size: clamp(34px, 7.4vh, 84px);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.room-title p {
+  margin: 2.2vh 0 0;
+  max-width: 28vh;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(14px, 2vh, 20px);
+  color: var(--fg-muted);
+}
+
+/* Entrance */
+.intro {
+  flex: none;
+  width: min(62vh, 520px);
+}
+
+.intro h1 {
+  margin-bottom: 3vh;
+  font-size: clamp(48px, 11vh, 132px);
+  font-weight: 300;
+  line-height: 0.96;
+}
+
+.lead {
+  margin: 0 0 4vh;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(18px, 3vh, 30px);
+  color: var(--fg-muted);
+}
+
+.cue-text {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: opacity 0.4s;
+}
+
+.stage.moved .cue-text {
+  opacity: 0;
+}
+
+/* One piece: a frame under a picture light, a label beside it.
+   --ft is where the frame's top edge sits (from the top of the stage); the light is aimed from the rail to it. */
+.work,
+.col {
+  --ft: calc(48vh - var(--h) / 2);
+}
+
+.work {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 2.4vh;
+}
+
+.hang {
+  position: relative;
+}
+
+.hang::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -22% -40%;
+  background: radial-gradient(ellipse at center, rgba(255, 249, 232, 0.55), transparent 62%);
+  pointer-events: none;
+}
+
+.dark .hang::after {
+  background: radial-gradient(ellipse at center, rgba(255, 236, 196, 0.2), transparent 62%);
+}
+
+.beam {
+  position: absolute;
+  z-index: 0;
+  left: -22%;
+  right: -22%;
+  top: calc(var(--track) - var(--ft));
+  height: calc(var(--ft) - var(--track) + var(--h));
+  pointer-events: none;
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  background: linear-gradient(to bottom, rgba(255, 244, 214, 0.34), rgba(255, 244, 214, 0.07) 75%, transparent);
+}
+
+.dark .beam {
+  background: linear-gradient(to bottom, rgba(255, 232, 186, 0.3), rgba(255, 232, 186, 0.05) 80%, transparent);
+}
+
+.lamp {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: calc(var(--track) - var(--ft) - 0.2vh);
+  width: 3.6vh;
+  height: 2vh;
+  transform: translateX(-50%);
+  border-radius: 0.6vh 0.6vh 1.4vh 1.4vh;
+  background: linear-gradient(#3a3631, #1b1917);
+  box-shadow: 0 0.4vh 0.8vh rgba(0, 0, 0, 0.4);
+}
+
+.work .frame-art {
+  position: relative;
+  z-index: 1;
+  height: var(--h);
+  aspect-ratio: var(--r);
+}
+
+/* Wall labels */
+.placard {
+  flex: none;
+  width: clamp(190px, 29vh, 300px);
+  margin-bottom: 2vh;
+  padding: 2vh 2.2vh;
+  background: #f7f5ef;
+  color: var(--ink);
+  border: 1px solid rgba(29, 28, 26, 0.18);
+  box-shadow: 0 0.6vh 1.4vh rgba(0, 0, 0, 0.18);
+  font-size: clamp(12px, 1.75vh, 15px);
+  line-height: 1.5;
+}
+
+.placard p {
+  margin: 0 0 0.9vh;
+}
+
+.placard h3 {
+  margin-bottom: 0.6vh;
+  font-size: clamp(20px, 3.2vh, 30px);
+}
+
+.placard .no {
+  margin-bottom: 1vh;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.placard .role {
+  font-family: var(--serif);
+  font-style: italic;
+  color: #5a554d;
+}
+
+.placard .meta {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6c675e;
+}
+
+.placard ul {
+  margin: 1vh 0 0;
+  padding-left: 1.1em;
+}
+
+.placard li {
+  margin-bottom: 0.7vh;
+}
+
+.placard li::marker {
+  color: var(--accent);
+}
+
+.links {
+  display: flex;
+  gap: 16px;
+  margin-top: 1.2vh;
+}
+
+.links a {
+  font-weight: 700;
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+/* About: small frames and wall text, hung high-low-high-low */
+.room-about .room-in,
+.room-experience .room-in,
+.room-projects .room-in {
+  gap: 5vh;
+}
+
+.about-col {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vh;
+  width: 34vh;
+  height: 66vh;
+}
+
+.about-col.low {
+  flex-direction: column-reverse;
+}
+
+.walltext {
+  width: 34vh;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(13px, 1.85vh, 17px);
+  line-height: 1.5;
+  color: var(--fg);
+}
+
+.about-col .work {
+  flex: none;
+}
+
+.view {
+  margin-top: 0.6vh;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.view:hover {
+  text-decoration: underline;
+}
+
+.bench {
+  flex: none;
+  position: relative;
+  align-self: flex-end;
+  width: 24vh;
+  height: 3.4vh;
+  margin: 0 1vh 9vh;
+  border-radius: 0.8vh;
+  background: linear-gradient(#34302b, #1c1a18);
+  box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.35);
+}
+
+.bench::before,
+.bench::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  width: 0.9vh;
+  height: 4.4vh;
+  background: #1c1a18;
+}
+
+.bench::before {
+  left: 8%;
+}
+
+.bench::after {
+  right: 8%;
+}
+
+/* Frames: black, oak, gallery canvas, gilt */
+.frame-art {
+  margin: 0;
+  display: flex;
+  box-shadow: 0 2.4vh 3.2vh -1.4vh rgba(15, 10, 4, 0.5), 0 0.3vh 0.7vh rgba(15, 10, 4, 0.3);
+}
+
+.frame-btn {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   cursor: zoom-in;
 }
 
-.spacer {
+.mat {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.v-black {
+  padding: 0.8vh;
+  background: #1e1c1a;
+}
+
+.v-black .mat,
+.v-oak .mat {
+  padding: 2.4vh;
+  background: #f4f1ea;
+  box-shadow: inset 0 0 0 1px rgba(29, 28, 26, 0.1);
+}
+
+.v-oak {
+  padding: 1.1vh;
+  background: linear-gradient(135deg, #8d6c45, #6a4e31 55%, #8d6c45);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35), 0 2.4vh 3.2vh -1.4vh rgba(15, 10, 4, 0.5), 0 0.3vh 0.7vh rgba(15, 10, 4, 0.3);
+}
+
+.v-canvas {
+  padding: 0;
+  background: none;
+  box-shadow: 0 2.8vh 3.6vh -1.2vh rgba(15, 10, 4, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.v-gilt {
+  padding: 1.3vh;
+  background: linear-gradient(135deg, #cfaa5e, #8f6d2c 50%, #cfaa5e);
+  box-shadow: inset 0 0 0 1px rgba(60, 40, 5, 0.5), 0 2.6vh 3.4vh -1.4vh rgba(15, 10, 4, 0.55), 0 0.3vh 0.7vh rgba(15, 10, 4, 0.3);
+}
+
+.v-gilt .mat {
+  padding: 3vh;
+  background: #f4f1ea;
+  box-shadow: inset 0 0 0 0.5vh #d8d2c4, inset 0 0 0 1px rgba(29, 28, 26, 0.12);
+}
+
+/* Photo room: a salon hang of stacked frames */
+.col {
+  flex: none;
+}
+
+.col-frames {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3vh;
+}
+
+.col:nth-child(odd) .col-frames {
+  transform: translateY(2.4vh);
+}
+
+.col:nth-child(even) .col-frames {
+  transform: translateY(-2.4vh);
+}
+
+.cell {
+  display: flex;
+}
+
+.cell .frame-art {
   position: relative;
-  width: 1px;
-  pointer-events: none;
+  z-index: 1;
+  height: 29vh;
+  aspect-ratio: var(--r);
 }
 
-.grain,
-.vignette {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+.cell .v-black .mat,
+.cell .v-oak .mat {
+  padding: 1.4vh;
 }
 
-.grain {
-  opacity: 0.2;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+/* Contact */
+.contact-card {
+  flex: none;
+  width: min(62vh, 560px);
 }
 
-.vignette {
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(70, 40, 15, 0.28) 100%);
+.contact-heading {
+  margin: 0 0 2.4vh;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(30px, 6.4vh, 70px);
+  line-height: 1.05;
 }
 
-/* Navigation */
+.contact-note {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--fg-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 3.4vh;
+}
+
+.exit {
+  margin: 6vh 0 0;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+/* Navigation and floor plan */
 .nav {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px clamp(14px, 3vw, 36px);
+  gap: 12px;
+  padding: 14px clamp(16px, 3vw, 40px);
   pointer-events: none;
 }
 
@@ -87,205 +623,91 @@ button {
 }
 
 .brand {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
-  background: var(--paper);
+  border: 0;
+  background: none;
+  padding: 0;
   font-family: var(--serif);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 17px;
+  font-weight: 500;
+  color: #1d1c1a;
+}
+
+.brand-short {
+  display: none;
 }
 
 .nav nav {
   display: flex;
-  gap: 4px;
-  padding: 5px;
+  gap: 2px;
+  padding: 4px;
   border-radius: 999px;
-  background: rgba(248, 241, 227, 0.88);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 2px 14px rgba(60, 35, 15, 0.18);
+  background: rgba(247, 245, 239, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
 }
 
 .nav nav button {
   border: 0;
-  background: transparent;
-  padding: 8px 14px;
+  background: none;
+  padding: 7px 14px;
   border-radius: 999px;
   font-size: 14px;
-  font-weight: 500;
+  color: #5a554d;
   transition: background 0.2s, color 0.2s;
 }
 
 .nav nav button:hover {
-  background: rgba(194, 84, 59, 0.14);
+  color: #1d1c1a;
 }
 
 .nav nav button.on {
-  background: var(--ink);
-  color: var(--paper);
+  background: #1d1c1a;
+  color: #f7f5ef;
 }
 
-/* Text cards that float over the scene */
-.panels {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.panel {
+.plan {
   position: absolute;
-  top: 80px;
-  bottom: 28px;
-  width: min(480px, 38vw);
+  z-index: 30;
+  left: 50%;
+  bottom: 2.4vh;
+  width: min(420px, 62vw);
+  transform: translateX(-50%);
+  padding: 8px 10px 10px;
+  border-radius: 8px;
+  background: rgba(20, 17, 14, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.plan-rooms {
   display: flex;
-  align-items: center;
-  visibility: hidden;
-  opacity: 0;
+  gap: 3px;
 }
 
-.panel-left {
-  left: 4vw;
+.plan-rooms button {
+  flex-basis: 0;
+  min-width: 14px;
+  height: 14px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.2s;
 }
 
-.panel-right {
-  right: 4vw;
+.plan-rooms button:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.panel-full {
-  left: 0;
-  right: 0;
-  top: auto;
-  bottom: 5vh;
-  width: auto;
-  justify-content: center;
+.plan-rooms button.on {
+  background: #e8e3d9;
 }
 
-.card {
-  pointer-events: auto;
-  width: 100%;
-  max-height: 100%;
-  overflow: auto;
-  overscroll-behavior: contain;
-  padding: clamp(20px, 2.4vw, 32px);
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 8px 8px 0 rgba(43, 33, 24, 0.85);
-  font-size: clamp(14px, 1.05vw, 16px);
-  line-height: 1.55;
-}
-
-.panel-full .card {
-  width: auto;
-  max-width: min(640px, 92vw);
-  text-align: center;
-  box-shadow: 6px 6px 0 rgba(43, 33, 24, 0.85);
-}
-
-.card h1,
-.card h2 {
-  margin: 0 0 8px;
-  font-family: var(--serif);
-  font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.01em;
-}
-
-.card h1 {
-  font-size: clamp(34px, 5vw, 60px);
-}
-
-.card h2 {
-  font-size: clamp(26px, 2.8vw, 38px);
-}
-
-.card p {
-  margin: 0 0 12px;
-}
-
-.eyebrow {
-  margin: 0 0 6px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.lead {
-  font-family: var(--serif);
-  font-size: clamp(16px, 1.5vw, 21px);
-  color: var(--muted);
-}
-
-.hint {
-  font-family: var(--hand);
-  font-size: 24px;
-  color: var(--accent);
-  margin: 6px 0 0 !important;
-}
-
-.role,
-.meta {
-  color: var(--muted);
-  font-size: 0.92em;
-}
-
-.role {
-  font-weight: 500;
-}
-
-.card ul {
-  margin: 10px 0 0;
-  padding-left: 1.1em;
-}
-
-.card li {
-  margin-bottom: 8px;
-}
-
-.card li::marker {
-  color: var(--accent);
-}
-
-dl {
-  margin: 14px 0 0;
-}
-
-dt {
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--sage);
-}
-
-dd {
-  margin: 0 0 10px;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.tags span {
-  padding: 3px 10px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
+.plan-fill {
+  height: 2px;
+  margin-top: 8px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 .btn {
@@ -315,34 +737,6 @@ dd {
 
 .btn.primary:hover {
   background: #a9432d;
-}
-
-.thumbs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-}
-
-.thumb {
-  width: 64px;
-  height: 64px;
-  padding: 0;
-  border: 2px solid var(--ink);
-  border-radius: 4px;
-  overflow: hidden;
-  background: #d9c9a6;
-}
-
-.thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.kind-hero .card {
-  text-align: left;
 }
 
 /* Lightbox */
@@ -388,47 +782,232 @@ dd {
   right: 18px;
 }
 
-/* Phones and narrow windows: cards become a bottom sheet under the art */
-@media (max-width: 819px), (max-aspect-ratio: 19/20) {
+
+
+@media (max-width: 819px) {
+  .brand-full {
+    display: none;
+  }
+
+  .brand-short {
+    display: inline;
+  }
+
   .nav nav button {
-    padding: 7px 9px;
+    padding: 6px 8px;
     font-size: 12px;
   }
 
-  .brand {
-    width: 38px;
-    height: 38px;
+  .room-in {
+    gap: 6vh;
+    padding-left: 6vh;
+    padding-right: 8vh;
   }
 
-  .panel,
-  .panel-left,
-  .panel-right,
-  .panel-full {
-    left: 3vw;
-    right: 3vw;
-    top: auto;
-    bottom: 2.5vh;
-    width: auto;
-    max-height: 48vh;
-    align-items: flex-end;
+  .intro {
+    width: 60vw;
   }
 
-  .card,
-  .panel-full .card {
-    width: 100%;
-    max-width: none;
-    max-height: 48vh;
-    box-shadow: 4px 4px 0 rgba(43, 33, 24, 0.85);
+  .placard {
+    width: 52vw;
   }
 
-  .panel-full .card {
-    text-align: left;
+  .room-projects .placard {
+    width: 66vw;
+  }
+
+  .walltext {
+    width: 62vw;
+  }
+
+  .room-title {
+    width: 56vw;
+  }
+
+  .contact-card {
+    width: 82vw;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .btn,
-  .nav nav button {
+  .nav nav button,
+  .cue-text {
     transition: none;
+  }
+}
+
+/* Project view: the piece and its label, spot-lit on a dark ground */
+.pv {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 72px clamp(16px, 5vw, 64px) 40px;
+  background: radial-gradient(ellipse 70% 70% at 36% 48%, rgba(70, 58, 46, 0.96), rgba(14, 11, 8, 0.97));
+  animation: pv-in 0.35s ease-out;
+}
+
+@keyframes pv-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.pv-in {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 6vw, 80px);
+  max-width: 1100px;
+}
+
+.pv-frame {
+  display: flex;
+}
+
+.pv-frame .frame-art {
+  height: var(--h);
+  aspect-ratio: var(--r);
+}
+
+.pv-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pv-thumbs button {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  overflow: hidden;
+  background: none;
+}
+
+.pv-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pv-label {
+  flex: 0 1 440px;
+  padding: 28px 30px;
+  background: #f7f5ef;
+  color: var(--ink);
+  border: 1px solid rgba(29, 28, 26, 0.18);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.pv-label h3 {
+  margin-bottom: 6px;
+  font-size: clamp(28px, 3.4vw, 40px);
+}
+
+.pv-label .meta {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pv-label .role {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  color: #5a554d;
+}
+
+.pv-label ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 15px;
+}
+
+.pv-label li {
+  margin-bottom: 8px;
+}
+
+.pv-label li::marker {
+  color: var(--accent);
+}
+
+.pv-label .tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.pv-label .tags span {
+  padding: 3px 10px;
+  border: 1px solid rgba(29, 28, 26, 0.35);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.pv-label .links {
+  margin-top: 16px;
+}
+
+.pv-close {
+  position: fixed;
+  top: 16px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #f7f5ef;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+@media (max-width: 819px) {
+  .pv {
+    place-items: start center;
+  }
+
+  .pv-in {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pv-frame {
+    justify-content: center;
+  }
+
+  .pv-art {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pv-label {
+    flex: none;
+  }
+
+  .walltext {
+    width: 34vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pv {
+    animation: none;
   }
 }
