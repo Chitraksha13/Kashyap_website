@@ -1,7 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { about, contact, experiences, profile, projects } from '../content'
 import { imagesIn } from '../lib/assets'
-import { Art, Frame, HeroArt, type FrameVariant } from './Art'
+import { Art, Frame, type FrameVariant } from './Art'
+import { Booklet } from './Booklet'
 import { PROJECT_RATIOS } from './roomList'
 
 export type OpenFn = (images: string[], index: number) => void
@@ -28,10 +29,6 @@ function RoomTitle({ num, title, sub }: { num: string; title: string; sub?: stri
       {sub && <p>{sub}</p>}
     </div>
   )
-}
-
-function Bench() {
-  return <div className="bench" aria-hidden />
 }
 
 // A framed piece under its own picture light, with an optional wall label beside it.
@@ -75,37 +72,31 @@ export function Entrance({ reg }: { reg: Reg }) {
   return (
     <Room id="entrance" reg={reg}>
       <div className="intro">
-        <p className="eyebrow">{profile.subtitle}</p>
         <h1>
           Chitraksha
           <br />
           Kashyap
         </h1>
-        <p className="lead">{profile.tagline}</p>
         <p className="cue-text">Scroll to walk the gallery →</p>
       </div>
-      <Work seed="hero" art={<HeroArt />} ratio={0.8} h={54} variant="gilt">
-        <p className="no">Welcome</p>
-        <h3>Colour Study</h3>
-        <p className="role">Chitraksha Kashyap, 2026</p>
-        <p>An exhibition of work in engineering and product.</p>
-      </Work>
     </Room>
   )
 }
 
-// Small frames and wall text, stacked so the frames hang high, low, high, low.
+// Frames with their wall text underneath, all hung from the same line.
 export function AboutRoom({ reg }: { reg: Reg }) {
   const photos = imagesIn('about')
-  const ratios = [1.25, 0.8, 1, 1.3]
   return (
     <Room id="about" reg={reg}>
       <RoomTitle num="Room I" title="The Artist" />
       {about.chapters.map((text, i) => (
-        <div key={i} className={`about-col ${i % 2 ? 'low' : ''}`}>
-          <Work seed={`about-${i}`} images={photos[i] ? [photos[i]] : []} ratio={ratios[i % ratios.length]} h={30} variant={i % 2 ? 'oak' : 'black'} ft={i % 2 ? 51 : 15} />
-          <p className="walltext">{text}</p>
-          {i === 1 && <Bench />}
+        <div key={i} className="about-col">
+          <Work seed={`about-${i}`} images={photos[i] ? [photos[i]] : []} ratio={0.8} h={42} variant={i % 2 ? 'steel' : 'black'} ft={13} />
+          <div className="walltext">
+            {text.split(/(?<=[.!?])\s+/).map((sentence) => (
+              <p key={sentence}>{sentence}</p>
+            ))}
+          </div>
         </div>
       ))}
     </Room>
@@ -113,18 +104,9 @@ export function AboutRoom({ reg }: { reg: Reg }) {
 }
 
 export function ExperienceRoom({ reg, onOpen }: { reg: Reg; onOpen: OpenFn }) {
-  const ratios = [0.8, 1.25, 0.9, 1.1]
   return (
     <Room id="experience" reg={reg}>
-      <RoomTitle num="Room II" title="Experience" sub="Four roles, one thread: build what people need" />
-      {experiences.map((e, i) => (
-        <Work key={e.id} seed={e.id} images={imagesIn(`experience/${e.id}`)} ratio={ratios[i % ratios.length]} h={40} shift={i % 2 ? 9 : -9} variant={i % 2 ? 'oak' : 'black'} onOpen={onOpen}>
-          <p className="no">{no(i + 1)}</p>
-          <h3>{e.org}</h3>
-          <p className="role">{e.role}</p>
-          <p className="meta">{e.dates} · {e.location}</p>
-        </Work>
-      ))}
+      <Booklet onOpen={onOpen} />
     </Room>
   )
 }
@@ -150,15 +132,14 @@ export function ProjectsRoom({ reg, onProject }: { reg: Reg; onProject: (index: 
           <button className="view" onClick={() => onProject(i)}>View project →</button>
         </Work>
       ))}
-      {projects.length > 1 && <Bench />}
     </Room>
   )
 }
 
 export function PhotosRoom({ reg, onOpen }: { reg: Reg; onOpen: OpenFn }) {
   const photos = imagesIn('photos')
-  const ratios = [0.8, 1.3, 1.1, 0.75, 1.4, 0.9, 1, 1.2]
-  const items = photos.length ? photos : Array.from({ length: 8 }, (_, i) => `ph-${i}`)
+  const ratios = [0.8, 1.3, 1.1, 0.75, 1.4, 0.9]
+  const items = photos.length ? photos : Array.from({ length: 6 }, (_, i) => `ph-${i}`)
   const cols: number[][] = []
   items.forEach((_, i) => {
     if (i % 2 === 0) cols.push([i])
@@ -175,7 +156,7 @@ export function PhotosRoom({ reg, onOpen }: { reg: Reg; onOpen: OpenFn }) {
             <div className="col-frames">
               {col.map((i) => (
                 <div key={i} className="cell" style={css({ '--r': ratios[i % ratios.length] })}>
-                  <Frame variant={i % 3 === 0 ? 'canvas' : i % 3 === 1 ? 'black' : 'oak'} onClick={photos.length ? () => onOpen(photos, i) : undefined} label={`Open photo ${i + 1}`}>
+                  <Frame variant={i % 3 === 0 ? 'canvas' : i % 3 === 1 ? 'black' : 'steel'} onClick={photos.length ? () => onOpen(photos, i) : undefined} label={`Open photo ${i + 1}`}>
                     {photos.length ? <img className="art" src={items[i]} alt="" loading="lazy" /> : <Art seed={items[i]} ratio={ratios[i % ratios.length]} />}
                   </Frame>
                 </div>
@@ -194,7 +175,6 @@ export function ContactRoom({ reg }: { reg: Reg }) {
       <RoomTitle num="Room V" title="Contact" sub="Thank you for visiting" />
       <div className="contact-card">
         <p className="contact-heading">{contact.heading}</p>
-        <p className="contact-note">{contact.note}</p>
         <div className="actions">
           <a className="btn primary" href={`mailto:${profile.email}`}>{profile.email}</a>
           <a className="btn" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>

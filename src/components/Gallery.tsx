@@ -50,6 +50,8 @@ export function Gallery() {
       offs.forEach((o, i) => {
         if (cur + window.innerWidth * 0.4 >= o) idx = i
       })
+      // The last room can be narrower than the lookahead above, so the end of the wall always counts as it.
+      if (offs.length && cur >= max - 2) idx = offs.length - 1
       setActive(idx)
       stg.classList.toggle('moved', cur > 80)
     }
@@ -83,6 +85,7 @@ export function Gallery() {
     const onFocus = (e: FocusEvent) => {
       stg.scrollLeft = 0
       const r = (e.target as HTMLElement).getBoundingClientRect()
+      if (r.left >= 0 && r.right <= window.innerWidth) return
       const x = r.left + cur + r.width / 2 - window.innerWidth / 2
       window.scrollTo({ top: clamp(x, 0, geo.current.max), behavior: 'instant' })
     }
