@@ -1220,3 +1220,15 @@ h3 {
 .book-base {
   display: contents;
 }
+
+/* Cursor spotlight: the gallery dims a little at the edges, lit where you look. */
+.spot {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(circle 42vh at var(--mx, 50%) var(--my, 50%), transparent 0, rgba(20, 20, 24, 0.12) 100%);
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .spot { display: none; }
+}

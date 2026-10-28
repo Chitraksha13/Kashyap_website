@@ -108,6 +108,18 @@ export function Gallery() {
     }
   }, [])
 
+  // A soft spotlight that follows the cursor, like a visitor's torch in a dim gallery.
+  useEffect(() => {
+    const el = stage.current
+    if (!el || window.matchMedia('(pointer: coarse)').matches) return
+    const move = (e: PointerEvent) => {
+      el.style.setProperty('--mx', `${e.clientX}px`)
+      el.style.setProperty('--my', `${e.clientY}px`)
+    }
+    window.addEventListener('pointermove', move, { passive: true })
+    return () => window.removeEventListener('pointermove', move)
+  }, [])
+
   const go = (i: number) => {
     const { offs, max } = geo.current
     window.scrollTo({ top: clamp((offs[i] ?? 0) - window.innerWidth * 0.04, 0, max), behavior: 'smooth' })
@@ -124,6 +136,8 @@ export function Gallery() {
           <PhotosRoom reg={reg(4)} onOpen={onOpen} />
           <ContactRoom reg={reg(5)} />
         </div>
+
+        <div className="spot" aria-hidden="true" />
 
         <div className="nav">
           <button className="brand" onClick={() => go(0)} aria-label={`${profile.name}, back to the entrance`}>
