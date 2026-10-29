@@ -4,6 +4,7 @@ import { Lightbox } from './Lightbox'
 import { ProjectView } from './ProjectView'
 import { AboutRoom, ContactRoom, Entrance, ExperienceRoom, PhotosRoom, ProjectsRoom } from './Rooms'
 import { PROJECT_RATIOS, ROOMS } from './roomList'
+import { Walker } from './Walker'
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 
@@ -14,6 +15,7 @@ export function Gallery() {
   const stage = useRef<HTMLDivElement>(null)
   const wall = useRef<HTMLDivElement>(null)
   const fill = useRef<HTMLDivElement>(null)
+  const walker = useRef<HTMLDivElement>(null)
   const rooms = useRef<(HTMLElement | null)[]>([])
   const geo = useRef({ offs: [] as number[], max: 0 })
   const [active, setActive] = useState(0)
@@ -46,6 +48,12 @@ export function Gallery() {
       wl.style.transform = `translate3d(${-cur}px,0,0)`
       const { offs, max } = geo.current
       if (fill.current) fill.current.style.transform = `scaleX(${max ? cur / max : 0})`
+      // The walker crosses the floor as the wall moves; its stride follows the distance walked.
+      const w = walker.current
+      if (w) {
+        w.style.transform = `translate3d(${(max ? cur / max : 0) * (window.innerWidth - w.offsetWidth)}px,0,0)`
+        w.style.setProperty('--step', `${Math.sin(cur / 22) * 28}deg`)
+      }
       let idx = 0
       offs.forEach((o, i) => {
         if (cur + window.innerWidth * 0.4 >= o) idx = i
@@ -108,18 +116,6 @@ export function Gallery() {
     }
   }, [])
 
-  // A soft spotlight that follows the cursor, like a visitor's torch in a dim gallery.
-  useEffect(() => {
-    const el = stage.current
-    if (!el || window.matchMedia('(pointer: coarse)').matches) return
-    const move = (e: PointerEvent) => {
-      el.style.setProperty('--mx', `${e.clientX}px`)
-      el.style.setProperty('--my', `${e.clientY}px`)
-    }
-    window.addEventListener('pointermove', move, { passive: true })
-    return () => window.removeEventListener('pointermove', move)
-  }, [])
-
   const go = (i: number) => {
     const { offs, max } = geo.current
     window.scrollTo({ top: clamp((offs[i] ?? 0) - window.innerWidth * 0.04, 0, max), behavior: 'smooth' })
@@ -137,7 +133,7 @@ export function Gallery() {
           <ContactRoom reg={reg(5)} />
         </div>
 
-        <div className="spot" aria-hidden="true" />
+        <Walker ref={walker} dark={active === 4} />
 
         <div className="nav">
           <button className="brand" onClick={() => go(0)} aria-label={`${profile.name}, back to the entrance`}>

@@ -1221,14 +1221,28 @@ h3 {
   display: contents;
 }
 
-/* Cursor spotlight: the gallery dims a little at the edges, lit where you look. */
-.spot {
+
+/* A stick figure walking a dog along the floor; its stride follows the scroll. */
+.walker {
   position: absolute;
-  inset: 0;
-  z-index: 5;
+  z-index: 4;
+  left: 0;
+  bottom: 6.5vh;
+  width: 16vh;
+  color: #1f3fbf;
   pointer-events: none;
-  background: radial-gradient(circle 42vh at var(--mx, 50%) var(--my, 50%), transparent 0, rgba(20, 20, 24, 0.12) 100%);
+  will-change: transform;
 }
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .spot { display: none; }
-}
+.walker.dark { color: #5b7cff; }
+.walker svg { display: block; width: 100%; height: auto; overflow: visible; }
+.walker .leg-a { transform: rotate(var(--step, 0deg)); transform-origin: 30px 52px; }
+.walker .leg-b { transform: rotate(calc(var(--step, 0deg) * -1)); transform-origin: 30px 52px; }
+.walker .arm { transform: rotate(calc(var(--step, 0deg) * -0.8)); transform-origin: 30px 28px; }
+.walker .paw-a { transform: rotate(calc(var(--step, 0deg) * -1.1)); transform-origin: 104px 58px; }
+.walker .paw-b { transform: rotate(var(--step, 0deg)); transform-origin: 104px 58px; }
+.walker .paw-c { transform: rotate(var(--step, 0deg)); transform-origin: 126px 58px; }
+.walker .paw-d { transform: rotate(calc(var(--step, 0deg) * -1.1)); transform-origin: 126px 58px; }
+.walker .tail { animation: wag 0.5s ease-in-out infinite alternate; transform-origin: 100px 58px; }
+@keyframes wag { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+@media (prefers-reduced-motion: reduce) { .walker .tail { animation: none; } }
+@media (max-width: 480px) { .walker { display: none; } }
