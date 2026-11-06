@@ -224,6 +224,10 @@ h3 {
 }
 
 
+.intro .actions {
+  margin-bottom: 3vh;
+}
+
 .cue-text {
   margin: 0;
   font-size: 12px;
@@ -524,19 +528,6 @@ h3 {
   padding: 1.4vh;
 }
 
-/* Contact */
-.contact-card {
-  flex: none;
-  width: min(62vh, 560px);
-}
-
-.contact-heading {
-  margin: 0 0 2.4vh;
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(30px, 6.4vh, 70px);
-  line-height: 1.05;
-}
 
 
 .actions {
@@ -767,10 +758,6 @@ h3 {
 
   .room-title {
     width: 56vw;
-  }
-
-  .contact-card {
-    width: 82vw;
   }
 }
 

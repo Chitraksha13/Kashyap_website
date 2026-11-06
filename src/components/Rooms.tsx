@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { about, contact, experiences, profile, projects } from '../content'
+import { about, experiences, profile, projects } from '../content'
 import { imagesIn } from '../lib/assets'
 import { Art, Frame, type FrameVariant } from './Art'
 import { Booklet } from './Booklet'
@@ -77,6 +77,11 @@ export function Entrance({ reg }: { reg: Reg }) {
           <br />
           Kashyap
         </h1>
+        <div className="actions">
+          <a className="btn primary" href={`mailto:${profile.email}`}>Email Me!</a>
+          <a className="btn" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          <a className="btn" href={profile.resume} target="_blank" rel="noreferrer">Résumé (PDF)</a>
+        </div>
         <p className="cue-text">Scroll to walk the gallery →</p>
       </div>
     </Room>
@@ -165,23 +170,6 @@ export function PhotosRoom({ reg, onOpen }: { reg: Reg; onOpen: OpenFn }) {
           </div>
         </div>
       ))}
-    </Room>
-  )
-}
-
-export function ContactRoom({ reg }: { reg: Reg }) {
-  return (
-    <Room id="contact" reg={reg}>
-      <RoomTitle num="Room V" title="Contact" sub="Thank you for visiting" />
-      <div className="contact-card">
-        <p className="contact-heading">{contact.heading}</p>
-        <div className="actions">
-          <a className="btn primary" href={`mailto:${profile.email}`}>{profile.email}</a>
-          <a className="btn" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-          <a className="btn" href={profile.resume} target="_blank" rel="noreferrer">Résumé (PDF)</a>
-        </div>
-        <p className="exit">© {new Date().getFullYear()} {profile.name}</p>
-      </div>
     </Room>
   )
 }

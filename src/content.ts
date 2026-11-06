@@ -97,14 +97,29 @@ export type Project = {
 // The gallery wall grows by itself.
 export const projects: Project[] = [
   {
+    id: 'nudge',
+    title: 'Nudge',
+    kicker: 'Shared bills, minus the chasing',
+    dates: '2026',
+    tags: ['Next.js + TypeScript', 'Supabase', 'PostgreSQL'],
+    bullets: [
+      'Splitting is easy. Getting paid back isn’t. In college, I’ve covered countless bills and waited weeks to get paid back, or forgotten I was owed at all. Nobody minded paying their share; they just hated being the one who had to ask. Payment apps make sending money easy, but the follow-up is still awkward.',
+      'I built the MVP of Nudge, a mobile-first app where roommates log shared bills, split them, and pay each other back in one tap. If someone forgets, Nudge sends the reminder automatically, so you never have to. It started with college students, but it works anywhere people share bills, from a first apartment to a trip with friends.',
+    ],
+    links: [
+      { label: 'Website', url: 'https://nudge-theta-lemon.vercel.app/' },
+      { label: 'GitHub', url: 'https://github.com/Chitraksha13/Nudge' },
+      { label: 'PRD', url: '/nudge-prd.md' },
+    ],
+  },
+  {
     id: 'sageware',
     title: 'Sageware',
     kicker: 'An automated fabric bead machine',
     dates: 'Dec 2025 – Feb 2026',
     tags: ['Zephyr RTOS', 'Embedded', 'User research'],
     bullets: [
-      'Developed firmware on Zephyr RTOS for an automated fabric bead machine within a 12+ member cross-functional team, translating product requirements into reliable button, display, and motor control in 3 months.',
-      'Conducted 30+ user interviews to translate customer needs into product requirements, delivering the prototype $200 under a $1.5K budget and presenting the final product to 100+ students and faculty at a university showcase.',
+      'Designed and shipped the UX layer for an automated bead machine in 10 weeks for 200+ users, on Zephyr RTOS, building a custom timer+DMA LED driver on a non-SPI pin and interrupt-driven, debounced button input for feedback',
     ],
   },
   {
@@ -119,7 +134,3 @@ export const projects: Project[] = [
     ],
   },
 ]
-
-export const contact = {
-  heading: 'Let’s build something people love.',
-}

@@ -4,7 +4,6 @@ export const ROOMS = [
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'photos', label: 'Photos' },
-  { id: 'contact', label: 'Contact' },
 ]
 
 // Frame proportions for the project pieces, shared by the wall and the project overlay.

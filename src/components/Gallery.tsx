@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { profile, projects } from '../content'
 import { Lightbox } from './Lightbox'
 import { ProjectView } from './ProjectView'
-import { AboutRoom, ContactRoom, Entrance, ExperienceRoom, PhotosRoom, ProjectsRoom } from './Rooms'
+import { AboutRoom, Entrance, ExperienceRoom, PhotosRoom, ProjectsRoom } from './Rooms'
 import { PROJECT_RATIOS, ROOMS } from './roomList'
 import { Walker } from './Walker'
 
@@ -130,7 +130,6 @@ export function Gallery() {
           <ExperienceRoom reg={reg(2)} onOpen={onOpen} />
           <ProjectsRoom reg={reg(3)} onProject={setProject} />
           <PhotosRoom reg={reg(4)} onOpen={onOpen} />
-          <ContactRoom reg={reg(5)} />
         </div>
 
         <Walker ref={walker} dark={active === 4} />
