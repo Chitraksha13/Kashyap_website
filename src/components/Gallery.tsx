@@ -159,7 +159,7 @@ export function Gallery() {
       </div>
 
       {project !== null && (
-        <ProjectView project={projects[project]} ratio={PROJECT_RATIOS[project % PROJECT_RATIOS.length]} onClose={closeProject} onOpen={onOpen} />
+        <ProjectView project={projects[project]} ratio={projects[project].imageRatio ?? PROJECT_RATIOS[project % PROJECT_RATIOS.length]} onClose={closeProject} onOpen={onOpen} />
       )}
       {box && <Lightbox images={box.images} index={box.index} onChange={(i) => setBox({ ...box, index: i })} onClose={() => setBox(null)} />}
     </section>

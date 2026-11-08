@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import type { Project } from '../content'
 import { imagesIn } from '../lib/assets'
 import { Art, Frame } from './Art'
@@ -7,9 +7,10 @@ import type { OpenFn } from './Rooms'
 type Props = { project: Project; ratio: number; onClose: () => void; onOpen: OpenFn }
 
 // A project on its own: the framed piece with its full wall label beside it.
-export function ProjectView({ project: p, ratio, onClose, onOpen }: Props) {
+export function ProjectView({ project: p, ratio, onClose }: Props) {
   const images = imagesIn(`projects/${p.id}`)
   const close = useRef<HTMLButtonElement>(null)
+  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -22,13 +23,19 @@ export function ProjectView({ project: p, ratio, onClose, onOpen }: Props) {
     <div className="pv" onClick={onClose} role="dialog" aria-modal="true" aria-label={p.title}>
       <div className="pv-in" onClick={(e) => e.stopPropagation()}>
         <div className="pv-art">
-          <div style={{ '--h': 'min(58vh, 520px)', '--r': ratio } as CSSProperties} className="pv-frame">
-            <Frame variant="canvas">{images.length ? <img className="art" src={images[0]} alt="" /> : <Art seed={p.id} ratio={ratio} />}</Frame>
+          <div style={{ '--ih': `min(52vh, 520px, ${Math.round(560 / ratio)}px)`, '--r': ratio } as CSSProperties} className="pv-frame">
+            <Frame variant="black">{images.length ? <img className="art" src={images[current]} alt="" /> : <Art seed={p.id} ratio={ratio} />}</Frame>
           </div>
           {images.length > 1 && (
             <div className="pv-thumbs">
               {images.map((src, i) => (
-                <button key={src} onClick={() => onOpen(images, i)} aria-label={`Open photo ${i + 1} of ${images.length}`}>
+                <button
+                  key={src}
+                  className={i === current ? 'on' : ''}
+                  onClick={() => setCurrent(i)}
+                  aria-label={`Show picture ${i + 1} of ${images.length}`}
+                  aria-pressed={i === current}
+                >
                   <img src={src} alt="" />
                 </button>
               ))}

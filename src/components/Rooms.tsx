@@ -3,7 +3,7 @@ import { about, experiences, profile, projects } from '../content'
 import { imagesIn } from '../lib/assets'
 import { Art, Frame, type FrameVariant } from './Art'
 import { Booklet } from './Booklet'
-import { PROJECT_RATIOS } from './roomList'
+import { PROJECT_RATIOS, wallFrame } from './roomList'
 
 export type OpenFn = (images: string[], index: number) => void
 type Reg = (el: HTMLElement | null) => void
@@ -120,15 +120,15 @@ export function ProjectsRoom({ reg, onProject }: { reg: Reg; onProject: (index: 
   return (
     <Room id="projects" reg={reg}>
       <RoomTitle num="Room III" title="Projects" sub="Click a piece to read more" />
-      {projects.map((p, i) => (
+      {projects.map((p, i) => {
+        const fit = p.imageRatio ? wallFrame(p.imageRatio) : { ratio: PROJECT_RATIOS[i % PROJECT_RATIOS.length], h: 44 }
+        return (
         <Work
           key={p.id}
           seed={p.id}
           images={imagesIn(`projects/${p.id}`)}
-          ratio={PROJECT_RATIOS[i % PROJECT_RATIOS.length]}
-          h={44}
-          shift={i % 2 ? 7 : -7}
-          variant={i % 2 ? 'black' : 'canvas'}
+          ratio={fit.ratio}
+          h={fit.h}
           onSelect={() => onProject(i)}
         >
           <p className="no">{no(experiences.length + i + 1)}</p>
@@ -136,7 +136,8 @@ export function ProjectsRoom({ reg, onProject }: { reg: Reg; onProject: (index: 
           <p className="role">{p.kicker}</p>
           <button className="view" onClick={() => onProject(i)}>View project →</button>
         </Work>
-      ))}
+        )
+      })}
     </Room>
   )
 }

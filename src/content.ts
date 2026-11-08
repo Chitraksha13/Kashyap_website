@@ -58,7 +58,7 @@ export const experiences: Experience[] = [
   },
   {
     id: 'soundry-ai',
-    org: 'Soundry AI',
+    org: 'Soundry AI (YC W24)',
     role: 'Product Designer Intern',
     dates: 'Jul 2025 – Aug 2025',
     location: 'Seattle, WA',
@@ -89,6 +89,8 @@ export type Project = {
   tags: string[]
   bullets: string[]
   // Optional case-study sections. Fill any of these in and they appear on the page.
+  // Width / height of the first image, so its frame fits it exactly (no cropping).
+  imageRatio?: number
   links?: { label: string; url: string }[] // e.g. { label: 'GitHub', url: '...' }
   caseStudy?: { problem?: string; users?: string; decisions?: string; outcome?: string }
 }
@@ -98,13 +100,14 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: 'nudge',
+    imageRatio: 784 / 1370,
     title: 'Nudge',
     kicker: 'Shared bills, minus the chasing',
     dates: '2026',
     tags: ['Next.js + TypeScript', 'Supabase', 'PostgreSQL'],
     bullets: [
-      'Splitting is easy. Getting paid back isn’t. In college, I’ve covered countless bills and waited weeks to get paid back, or forgotten I was owed at all. Nobody minded paying their share; they just hated being the one who had to ask. Payment apps make sending money easy, but the follow-up is still awkward.',
-      'I built the MVP of Nudge, a mobile-first app where roommates log shared bills, split them, and pay each other back in one tap. If someone forgets, Nudge sends the reminder automatically, so you never have to. It started with college students, but it works anywhere people share bills, from a first apartment to a trip with friends.',
+      'Splitting is easy. Getting paid back isn’t. In college, I’ve covered countless bills and waited weeks to get paid back. Most people don’t mind paying their share; they just hate being the one who has to ask. Payment apps make sending money easy, but the follow-up is still awkward.',
+      'I built Nudge, a mobile-first app where roommates log shared bills, split them, and pay each other back in one tap. If someone forgets, Nudge sends the reminder automatically, so you never have to.',
     ],
     links: [
       { label: 'Website', url: 'https://nudge-theta-lemon.vercel.app/' },
@@ -114,6 +117,7 @@ export const projects: Project[] = [
   },
   {
     id: 'sageware',
+    imageRatio: 726 / 512,
     title: 'Sageware',
     kicker: 'An automated fabric bead machine',
     dates: 'Dec 2025 – Feb 2026',
@@ -124,6 +128,7 @@ export const projects: Project[] = [
   },
   {
     id: 'nltk-resume-parser',
+    imageRatio: 962 / 424,
     title: 'NLTK Resume Parser',
     kicker: 'Resume screening, minus the busywork',
     dates: 'Jun 2025',

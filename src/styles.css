@@ -780,7 +780,7 @@ h3 {
   z-index: 40;
   display: grid;
   place-items: center;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 72px clamp(16px, 5vw, 64px) 40px;
   background: radial-gradient(ellipse 70% 70% at 36% 48%, rgba(44, 46, 52, 0.96), rgba(12, 12, 14, 0.97));
   animation: pv-in 0.35s ease-out;
@@ -796,17 +796,22 @@ h3 {
 .pv-in {
   display: flex;
   align-items: center;
-  gap: clamp(28px, 6vw, 80px);
-  max-width: 1100px;
+  gap: clamp(28px, 5vw, 64px);
+  max-width: 1240px;
+}
+
+.pv-art {
+  flex: none;
 }
 
 .pv-frame {
   display: flex;
 }
 
-.pv-frame .frame-art {
-  height: var(--h);
-  aspect-ratio: var(--r);
+.pv-frame .art {
+  width: calc(var(--ih) * var(--r));
+  height: var(--ih);
+  object-fit: contain;
 }
 
 .pv-thumbs {
@@ -820,10 +825,23 @@ h3 {
   width: 56px;
   height: 56px;
   padding: 0;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   border-radius: 3px;
   overflow: hidden;
   background: none;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.pv-thumbs button:hover {
+  opacity: 0.9;
+}
+
+.pv-thumbs button.on {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px var(--accent);
+  opacity: 1;
 }
 
 .pv-thumbs img {
@@ -834,8 +852,10 @@ h3 {
 }
 
 .pv-label {
-  flex: 0 1 440px;
-  padding: 28px 30px;
+  flex: 0 1 540px;
+  max-height: calc(100vh - 112px);
+  overflow-y: auto;
+  padding: 30px 34px 28px;
   background: #fafaf8;
   color: var(--ink);
   border: 1px solid rgba(20, 20, 20, 0.18);
@@ -843,8 +863,9 @@ h3 {
 }
 
 .pv-label h3 {
-  margin-bottom: 6px;
-  font-size: clamp(28px, 3.4vw, 40px);
+  margin-bottom: 4px;
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.05;
 }
 
 .pv-label .meta {
@@ -856,7 +877,9 @@ h3 {
 }
 
 .pv-label .role {
-  margin: 0 0 12px;
+  margin: 0 0 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(20, 20, 20, 0.14);
   font-family: var(--serif);
   font-style: italic;
   font-size: 20px;
@@ -866,11 +889,12 @@ h3 {
 .pv-label ul {
   margin: 0;
   padding-left: 1.1em;
-  font-size: 17px;
+  font-size: 15.5px;
+  line-height: 1.5;
 }
 
 .pv-label li {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .pv-label li::marker {
@@ -892,7 +916,24 @@ h3 {
 }
 
 .pv-label .links {
-  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.pv-label .links a {
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pv-label .links a:hover {
+  background: var(--accent);
+  color: #fff;
 }
 
 .pv-close {
@@ -912,6 +953,11 @@ h3 {
 @media (max-width: 819px) {
   .pv {
     place-items: start center;
+    overflow-y: auto;
+  }
+
+  .pv-label {
+    max-height: none;
   }
 
   .pv-in {
