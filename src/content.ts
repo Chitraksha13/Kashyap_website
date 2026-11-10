@@ -112,7 +112,7 @@ export const projects: Project[] = [
     links: [
       { label: 'Website', url: 'https://nudge-theta-lemon.vercel.app/' },
       { label: 'GitHub', url: 'https://github.com/Chitraksha13/Nudge' },
-      { label: 'PRD', url: '/nudge-prd.md' },
+      { label: 'PRD', url: '/nudge-prd.pdf' },
     ],
   },
   {
